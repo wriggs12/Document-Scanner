@@ -3,35 +3,31 @@
 
 int main(int argc, char** argv)
 {
-    cv::namedWindow("Example 2-10", cv::WINDOW_AUTOSIZE);
+    std::string filename = argv[1];
     cv::VideoCapture cap;
+    cap.open(filename);
 
-    if (argc == 1)
+    double fps = cap.get(cv::CAP_PROP_FPS);
+
+    while (1)
     {
-        cap.open(0);
-        cap.set(cv::CAP_PROP_FRAME_WIDTH, 320);
-        cap.set(cv::CAP_PROP_FRAME_HEIGHT, 260);
-        cap.set(cv::CAP_PROP_FPS, 30);
-        cap.set(cv::CAP_PROP_FOURCC,  cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
-    }
-    else
-    {
-        std::cout << "HERE" << std::endl;
+        cv::Mat frame;
+
+        if (!cap.read(frame))
+        {
+            std::cout << "Error reading frame\n";
+            break;
+        }
+
+        cv::imshow("Lane Detection", frame);
+
+        if (cv::waitKey(30) == 27)
+        {
+            break;
+        }
     }
 
-    if (!cap.isOpened())
-    {
-        std::cerr << "Use a different camera port number!" << std::endl;
-        return -1;
-    }
-
-    // while (true)
-    // {
-    //     cv::Mat frame;
-    //     cap.read(frame);
-    //     imshow("camera", frame);
-    //     cv::waitKey(1);
-    // }
+    return 0;
 
     return 0;
 }
